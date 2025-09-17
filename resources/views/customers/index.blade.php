@@ -8,42 +8,48 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold">All Customers</h3>
-                        <a href="{{ route('customers.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Add Customer
-                        </a>
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <div class="mb-4 flex justify-between">
+                        <a href="{{ route('customers.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">Add Customer</a>
                     </div>
-                    <table class="table-auto w-full">
-                        <thead>
+                    <table id="customers-table" class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-4 py-2">Name</th>
-                                <th class="px-4 py-2">Email</th>
-                                <th class="px-4 py-2">Phone</th>
-                                <th class="px-4 py-2">Actions</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Name
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Email
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Phone
+                                </th>
+                                <th scope="col" class="relative px-6 py-3">
+                                    <span class="sr-only">Edit</span>
+                                </th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach ($customers as $customer)
-                                <tr>
-                                    <td class="border px-4 py-2">{{ $customer->name }}</td>
-                                    <td class="border px-4 py-2">{{ $customer->email }}</td>
-                                    <td class="border px-4 py-2">{{ $customer->phone }}</td>
-                                    <td class="border px-4 py-2">
-                                        <a href="{{ route('customers.edit', $customer->id) }}" class="text-blue-500 hover:text-blue-700">Edit</a>
-                                        <form action="{{ route('customers.destroy', $customer->id) }}" method="POST" class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-500 hover:text-red-700 ml-4">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#customers-table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route("customers.index") }}',
+                columns: [
+                    { data: 'name', name: 'name' },
+                    { data: 'email', name: 'email' },
+                    { data: 'phone', name: 'phone' },
+                    { data: 'action', name: 'action', orderable: false, searchable: false },
+                ]
+            });
+        });
+    </script>
+    @endpush
 </x-app-layout>

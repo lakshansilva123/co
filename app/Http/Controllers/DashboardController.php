@@ -38,7 +38,7 @@ class DashboardController extends Controller
             ->get();
 
         // New Booking Activity
-        $newBookingActivity = Booking::with('customer')->latest()->take(5)->get();
+        $newBookingActivity = Booking::with(['customer', 'garment'])->latest()->take(5)->get();
 
         return view('dashboard', compact(
             'totalBookings',

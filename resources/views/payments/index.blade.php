@@ -1,42 +1,55 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Payments') }}
+        </h2>
+    </x-slot>
 
-@section('content')
-    <div class="container mx-auto">
-        <h1 class="text-2xl font-bold mb-4">Payments for Booking #{{ $booking->id }}</h1>
-
-        <a href="{{ route('bookings.payments.create', $booking) }}" class="bg-blue-500 text-white px-4 py-2 rounded mb-4 inline-block">Add Payment</a>
-
-        <table class="min-w-full bg-white">
-            <thead>
-                <tr>
-                    <th class="py-2 px-4 border-b">ID</th>
-                    <th class="py-2 px-4 border-b">Amount</th>
-                    <th class="py-2 px-4 border-b">Payment Date</th>
-                    <th class="py-2 px-4 border-b">Payment Method</th>
-                    <th class="py-2 px-4 border-b">Status</th>
-                    <th class="py-2 px-4 border-b">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($payments as $payment)
-                    <tr>
-                        <td class="py-2 px-4 border-b">{{ $payment->id }}</td>
-                        <td class="py-2 px-4 border-b">{{ $payment->amount }}</td>
-                        <td class="py-2 px-4 border-b">{{ $payment->payment_date }}</td>
-                        <td class="py-2 px-4 border-b">{{ $payment->payment_method }}</td>
-                        <td class="py-2 px-4 border-b">{{ $payment->status }}</td>
-                        <td class="py-2 px-4 border-b">
-                            <a href="{{ route('payments.show', $payment) }}" class="text-blue-500">View</a>
-                            <a href="{{ route('payments.edit', $payment) }}" class="text-green-500 ml-2">Edit</a>
-                            <form action="{{ route('payments.destroy', $payment) }}" method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500 ml-2">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <div class="mb-4 flex justify-between">
+                        <a href="{{ route('payments.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">Add Payment</a>
+                    </div>
+                    <table id="payments-table" class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Booking
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Amount
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Payment Date
+                                </th>
+                                <th scope="col" class="relative px-6 py-3">
+                                    <span class="sr-only">Edit</span>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-@endsection
+
+    @push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#payments-table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route("payments.index") }}',
+                columns: [
+                    { data: 'booking_id', name: 'booking_id' },
+                    { data: 'amount', name: 'amount' },
+                    { data: 'payment_date', name: 'payment_date' },
+                    { data: 'action', name: 'action', orderable: false, searchable: false },
+                ]
+            });
+        });
+    </script>
+    @endpush
+</x-app-layout>

@@ -20,7 +20,7 @@
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
 
-            <x-text-input id="password" class="block mt-1 w-full"
+            <x-text-input id="password"
                             type="password"
                             name="password"
                             required autocomplete="new-password" />
@@ -44,7 +44,7 @@
                 {{ __('Already registered?') }}
             </a>
 
-            <x-primary-button class="ms-4">
+            <x-primary-button class="ml-4">
                 {{ __('Register') }}
             </x-primary-button>
         </div>

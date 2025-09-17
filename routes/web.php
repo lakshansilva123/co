@@ -5,15 +5,21 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\GarmentController;
-use App\Http_Controllers\BookingController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\GarmentReturnController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\PricingTaxController;
 
-Route::get('/', [DashboardController::class, 'index'])->middleware(['auth', 'verified']);
+// Guest routes
+Route::get('/', function () {
+    return view('welcome');
+})->middleware('guest');
 
+// Authenticated user routes
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/', [DashboardController::class, 'index']);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -23,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('customers', CustomerController::class);
     Route::resource('garments', GarmentController::class);
     Route::resource('bookings', BookingController::class);
+    Route::resource('bookings.payments', PaymentController::class);
     Route::resource('returns', GarmentReturnController::class)->only([
         'index', 'create', 'store', 'show'
     ]);
