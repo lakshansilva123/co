@@ -6,16 +6,33 @@ use App\Models\GarmentReturn;
 use App\Models\Booking;
 use App\Models\Garment;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class GarmentReturnController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $returns = GarmentReturn::with('booking')->get();
-        return view('returns.index', compact('returns'));
+        if ($request->ajax()) {
+            $data = GarmentReturn::with(['booking.customer', 'booking.garment'])->select('garment_returns.*');
+            return DataTables::of($data)
+                ->addColumn('customer', function(GarmentReturn $return) {
+                    return $return->booking->customer->name;
+                })
+                ->addColumn('garment', function(GarmentReturn $return) {
+                    return $return->booking->garment->name;
+                })
+                ->addColumn('action', function($row){
+                    $btn = '<a href="'.route('returns.show', $row->id).'" class="text-indigo-600 hover:text-indigo-900">Show</a>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('returns.index');
     }
 
     /**

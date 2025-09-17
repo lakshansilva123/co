@@ -21,6 +21,7 @@ This project is a full-stack web application for managing a garment rental busin
 *   **Settings:**
     *   **Pricing & Tax Rules:** A section to manage pricing and tax rules.
 *   **DataTables Integration:** All modules with tabular data now use DataTables for a consistent and enhanced user experience.
+*   **Server-Side DataTables:** The Garments table now uses server-side processing to handle large datasets efficiently.
 *   **SweetAlert2 Integration:** Success and error messages are displayed using the SweetAlert2 library for a more user-friendly experience.
 
 ## Design

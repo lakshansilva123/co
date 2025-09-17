@@ -12,9 +12,21 @@ class BookingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $bookings = Booking::with(['customer', 'garment'])->get();
+        $query = Booking::with(['customer', 'garment']);
+
+        if ($request->has('search')) {
+            $searchTerm = $request->input('search');
+            $query->whereHas('customer', function ($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%");
+            })->orWhereHas('garment', function ($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        $bookings = $query->paginate(10);
+
         return view('bookings.index', compact('bookings'));
     }
 
