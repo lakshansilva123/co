@@ -1,21 +1,17 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Return Details') }}
+        </h2>
+    </x-slot>
 
-@section('content')
-    <div class="container">
-        <h1>Return Details</h1>
-
-        <div class="card">
-            <div class="card-header">
-                Return #{{ $return->id }}
-            </div>
-            <div class="card-body">
-                <p><strong>Booking ID:</strong> {{ $return->booking_id }}</p>
-                <p><strong>Return Date:</strong> {{ $return->return_date }}</p>
-                <p><strong>Condition:</strong> {{ $return->condition }}</p>
-                <p><strong>Notes:</strong> {{ $return->notes }}</p>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    {{ __("Return details view") }}
+                </div>
             </div>
         </div>
-
-        <a href="{{ route('returns.index') }}" class="btn btn-primary mt-3">Back to All Returns</a>
     </div>
-@endsection
+</x-app-layout>
