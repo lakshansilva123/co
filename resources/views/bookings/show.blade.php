@@ -16,5 +16,7 @@
 
         <a href="{{ route('bookings.index') }}" class="text-blue-500 mt-4">Back to Bookings</a>
         <a href="{{ route('bookings.payments.index', $booking) }}" class="bg-green-500 text-white px-4 py-2 rounded mt-4 inline-block">View Payments</a>
+        <a href="{{ route('bookings.send-confirmation', ['booking' => $booking, 'medium' => 'mail']) }}" class="bg-blue-500 text-white px-4 py-2 rounded mt-4 inline-block">Send Email</a>
+        <a href="{{ route('bookings.send-confirmation', ['booking' => $booking, 'medium' => 'vonage']) }}" class="bg-green-500 text-white px-4 py-2 rounded mt-4 inline-block">Send via WhatsApp</a>
     </div>
 @endsection

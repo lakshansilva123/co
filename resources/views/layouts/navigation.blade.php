@@ -6,8 +6,13 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                        @if ($logo)
+                            <img src="{{ asset('storage/' . $logo) }}" alt="{{ $appName }}" class="block h-9 w-auto">
+                        @else
+                            <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                        @endif
                     </a>
+                    <span class="font-semibold text-xl text-gray-800 dark:text-gray-200 ml-2">{{ $appName }}</span>
                 </div>
 
                 <!-- Navigation Links -->

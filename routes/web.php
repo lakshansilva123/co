@@ -9,7 +9,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\GarmentReturnController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\PricingTaxController;
 
 // Guest routes
@@ -28,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('customers', CustomerController::class);
     Route::resource('garments', GarmentController::class);
     Route::resource('bookings', BookingController::class);
+    Route::get('bookings/{booking}/send-confirmation/{medium}', [BookingController::class, 'sendConfirmation'])->name('bookings.send-confirmation');
     Route::resource('bookings.payments', PaymentController::class);
     Route::resource('returns', GarmentReturnController::class)->only([
         'index', 'create', 'store', 'show'
@@ -37,8 +38,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ]);
     
     Route::name('settings.')->prefix('settings')->group(function () {
-        Route::get('/', [SettingController::class, 'index'])->name('index');
-        Route::get('/pricing-tax', [PricingTaxController::class, 'index'])->name('pricing-tax');
+        Route::get('/', [SettingsController::class, 'index'])->name('index');
+        Route::put('/{setting}', [SettingsController::class, 'update'])->name('update');
+        Route::get('/pricing-tax', [PricingTaxController::class, 'index'])->name('pricing-tax.index');
     });
 });
 

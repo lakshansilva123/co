@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Customer;
 use App\Models\Garment;
+use App\Notifications\BookingConfirmation;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class BookingController extends Controller
 {
@@ -14,20 +16,28 @@ class BookingController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Booking::with(['customer', 'garment']);
-
-        if ($request->has('search')) {
-            $searchTerm = $request->input('search');
-            $query->whereHas('customer', function ($q) use ($searchTerm) {
-                $q->where('name', 'like', "%{$searchTerm}%");
-            })->orWhereHas('garment', function ($q) use ($searchTerm) {
-                $q->where('name', 'like', "%{$searchTerm}%");
-            });
+        if ($request->ajax()) {
+            $data = Booking::with(['customer', 'garment'])->select('bookings.*');
+            return DataTables::of($data)
+                ->addColumn('customer', function(Booking $booking) {
+                    return $booking->customer?->name;
+                })
+                ->addColumn('garment', function(Booking $booking) {
+                    return $booking->garment?->name;
+                })
+                ->addColumn('action', function($row){
+                    $btn = '<a href="'.route('bookings.show', $row->id).'" class="text-indigo-600 hover:text-indigo-900">Show</a>';
+                    $btn .= ' | <a href="'.route('bookings.edit', $row->id).'" class="text-indigo-600 hover:text-indigo-900">Edit</a>';
+                    if ($row->status !== 'returned') {
+                        $btn .= ' | <a href="'.route('returns.create', $row->id).'" class="text-indigo-600 hover:text-indigo-900">Process Return</a>';
+                    }
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
 
-        $bookings = $query->paginate(10);
-
-        return view('bookings.index', compact('bookings'));
+        return view('bookings.index');
     }
 
     /**
@@ -58,6 +68,8 @@ class BookingController extends Controller
         $garment = $booking->garment;
         $garment->status = 'rented out';
         $garment->save();
+
+        $booking->customer->notify(new BookingConfirmation($booking));
 
         return redirect()->route('bookings.index')
             ->with('success', 'Booking created successfully.');
@@ -122,5 +134,11 @@ class BookingController extends Controller
 
         return redirect()->route('bookings.index')
             ->with('success', 'Booking deleted successfully.');
+    }
+
+    public function sendConfirmation(Booking $booking, $medium)
+    {
+        $booking->customer->notify((new BookingConfirmation($booking))->via($medium));
+        return redirect()->back()->with('success', 'Confirmation sent successfully!');
     }
 }

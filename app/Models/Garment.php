@@ -23,15 +23,13 @@ class Garment extends Model
 
     protected $fillable = [
         'name',
-        'brand',
-        'color',
-        'fit',
         'type',
-        'price',
-        'security_deposit',
-        'damage_waiver_fee',
-        'images',
-        'notes',
+        'size',
+        'color',
+        'purchase_date',
+        'purchase_price',
+        'rental_price',
         'status',
+        'image_path',
     ];
 }

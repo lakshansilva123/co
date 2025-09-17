@@ -16,13 +16,13 @@ class GarmentReturnController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = GarmentReturn::with(['booking.customer', 'booking.garment'])->select('garment_returns.*');
+            $data = GarmentReturn::with(['booking.customer', 'booking.garment'])->select('returns.*');
             return DataTables::of($data)
                 ->addColumn('customer', function(GarmentReturn $return) {
-                    return $return->booking->customer->name;
+                    return $return->booking?->customer?->name;
                 })
                 ->addColumn('garment', function(GarmentReturn $return) {
-                    return $return->booking->garment->name;
+                    return $return->booking?->garment?->name;
                 })
                 ->addColumn('action', function($row){
                     $btn = '<a href="'.route('returns.show', $row->id).'" class="text-indigo-600 hover:text-indigo-900">Show</a>';
@@ -54,7 +54,7 @@ class GarmentReturnController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        $return = $booking->garmentReturn()->create([
+        $return = $booking->returns()->create([
             'return_date' => $request->return_date,
             'condition' => $request->condition,
             'notes' => $request->notes,

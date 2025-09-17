@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ $appName }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -31,10 +31,14 @@
 
             <div class="max-w-7xl mx-auto p-6 lg:p-8 text-center">
                 <div class="flex justify-center mb-8">
-                    <x-application-logo class="h-20 w-auto text-gray-500" />
+                    @if ($logo)
+                        <img src="{{ asset('storage/' . $logo) }}" alt="Logo" class="h-20 w-auto">
+                    @else
+                        <x-application-logo class="h-20 w-auto text-gray-500" />
+                    @endif
                 </div>
 
-                <h1 class="text-4xl font-bold text-gray-900 mb-4">Welcome to the Garment Rental Platform</h1>
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Welcome to {{ $appName }}</h1>
 
                 <p class="text-lg text-gray-600 mb-8">Your one-stop solution for managing your garment rental business.</p>
 

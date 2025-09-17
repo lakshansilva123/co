@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class CustomerController extends Controller
 {
@@ -12,17 +13,19 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Customer::query();
-
-        if ($request->has('search')) {
-            $searchTerm = $request->input('search');
-            $query->where('name', 'like', "%{$searchTerm}%")
-                  ->orWhere('email', 'like', "%{$searchTerm}%");
+        if ($request->ajax()) {
+            $data = Customer::select('customers.*');
+            return DataTables::of($data)
+                ->addColumn('action', function($row){
+                    $btn = '<a href="'.route('customers.show', $row->id).'" class="text-indigo-600 hover:text-indigo-900">Show</a>';
+                    $btn .= ' | <a href="'.route('customers.edit', $row->id).'" class="text-indigo-600 hover:text-indigo-900">Edit</a>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
 
-        $customers = $query->paginate(10);
-
-        return view('customers.index', compact('customers'));
+        return view('customers.index');
     }
 
     /**
